@@ -11,7 +11,7 @@ final class WelcomepageController extends AbstractController
     #[Route('/', name: 'welcomepage')]
     public function index(): Response
     {
-        return $this->render('welcomepage/index.html.twig', [
+        return $this->render('welcomepage/welcome.html.twig', [
             'controller_name' => 'WelcomepageController',
         ]);
     }
