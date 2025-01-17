@@ -1,22 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello WelcomepageController!{% endblock %}
+{% block title %}💳 OzzaBank - Services Financiers
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="min-h-screen bg-gray-100">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <nav class="bg-gray-800 text-white p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <a href="{{ path('welcomepage') }}" class="text-lg hover:text-gray-400">
+                    <h2 class="text-2xl font-bold">OzzaBank</h2>
+                </a>
+                <ul class="flex space-x-6">
+                    <li>
+                        <a href="{{ path('login') }}" class="text-lg hover:text-gray-400">Login</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('register') }}" class="text-lg hover:text-gray-400">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/Nexus/Desktop/challengeweb/src/Controller/WelcomepageController.php</code></li>
-        <li>Your template at <code>C:/Users/Nexus/Desktop/challengeweb/templates/welcomepage/index.html.twig</code></li>
-    </ul>
-    <a> <a href="{{ path('login') }}">Login</a>
-    <a> <a href="{{ path('register') }}">Register</a>
-</div>
+        <div class="w-full h-[40vh] relative bg-cover bg-center" style="background-image: url('{{ asset('images/welcomebackground.jpg') }}');">
+            <div class="absolute inset-0 bg-black opacity-50"></div> <!-- Assure un bon contraste du texte -->
+            <div class="relative z-10 flex flex-col items-center justify-center text-center text-white px-4 py-16">
+                <h1 class="text-4xl font-extrabold mb-4">Bienvenue chez OzzaBank</h1>
+                <p class="text-lg mb-8">Votre partenaire de confiance pour vos besoins financiers</p>
+                <a href="{{ path('login') }}" class="bg-yellow-500 hover:bg-yellow-400 text-white py-2 px-6 rounded-full text-lg">Découvrir nos services</a>
+            </div>
+        </div>
+
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Nos Services</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Crédit</h3>
+                        <p class="text-gray-600 mb-4">Obtenez des crédits personnalisés pour vos projets, à des taux compétitifs et avec des modalités flexibles.</p>
+                        <a href="{{ path('login') }}" class="text-yellow-500 hover:text-yellow-400">En savoir plus →</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Epargne</h3>
+                        <p class="text-gray-600 mb-4">Choisissez parmi nos solutions d’épargne à rendement attractif, adaptées à vos objectifs financiers.</p>
+                        <a href="{{ path('login') }}" class="text-yellow-500 hover:text-yellow-400">En savoir plus →</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Assurance</h3>
+                        <p class="text-gray-600 mb-4">Assurez votre avenir avec nos produits d’assurance vie, santé, automobile et habitation.</p>
+                        <a href="{{ path('login') }}" class="text-yellow-500 hover:text-yellow-400">En savoir plus →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 bg-gray-200 w-full relative" style="background-image: url('{{ asset('images/welcomebackground2.jpg') }}'); background-size: cover; background-position: center;">
+            <div class="absolute inset-0 bg-black opacity-50 filter grayscale"></div>
+            <div class="container mx-auto text-center relative z-10">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Ce que disent nos clients</h2>
+                <div class="flex justify-center space-x-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-72">
+                        <p class="text-gray-600 italic">"OzzaBank m'a aidé à réaliser mes projets grâce à un crédit rapide et facile à obtenir!"</p>
+                        <p class="font-semibold text-gray-800 mt-4">Jean Dupont</p>
+                        <p class="text-gray-500">Client satisfait</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-72">
+                        <p class="text-gray-600 italic">"Le service client est exceptionnel et les produits d'épargne sont vraiment intéressants."</p>
+                        <p class="font-semibold text-gray-800 mt-4">Marie Leclerc</p>
+                        <p class="text-gray-500">Client fidèle</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-gray-800 text-white p-4 mt-16">
+            <div class="container mx-auto text-center">
+                <p>&copy;
+                    {{ "now"|date("Y") }}
+                    OzzaBank. Tous droits réservés.</p>
+                <p class="text-sm">Créé avec ❤️ par l'équipe OzzaBank</p>
+            </div>
+        </footer>
+    </div>
 {% endblock %}

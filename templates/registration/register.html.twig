@@ -1,22 +1,116 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Register - OzzaBank{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+    <div class="min-h-screen bg-gray-100 overflow-hidden">
 
-    {{ form_errors(registrationForm) }}
+        <!-- Navbar -->
+        <nav class="bg-gray-800 text-white p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <a href="{{ path('welcomepage') }}" class="text-lg hover:text-gray-400">
+                    <h2 class="text-2xl font-bold">OzzaBank</h2>
+                </a>
+                <ul class="flex space-x-6">
+                    <li>
+                        <a href="{{ path('login') }}" class="text-lg hover:text-gray-400">Login</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('register') }}" class="text-lg hover:text-gray-400">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.nom) }}
-        {{ form_row(registrationForm.prenom) }}
-        {{ form_row(registrationForm.telephone) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+        <!-- Registration Form Section -->
+        <div class="flex items-center justify-center min-h-[86vh] bg-gray-50" style="background-image: url('{{ asset('images/welcomebackground.jpg') }}');">
+            <div class="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96">
+                <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">Register</h2>
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+                <!-- Display form errors if any -->
+                {{ form_errors(registrationForm) }}
+
+                <!-- Form Start -->
+                {{ form_start(registrationForm) }}
+                <div class="space-y-4">
+                    <!-- Form fields with borders -->
+                    <div class="form-group">
+                        {{ form_row(registrationForm.nom, {
+                            'label_attr': {
+                                'class': 'font-bold'
+                            },
+                            'attr': {
+                                'class': 'input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full'
+                            }
+                        }) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(registrationForm.prenom, {
+                            'label_attr': {
+                                'class': 'font-bold'
+                            },
+                            'attr': {
+                                'class': 'input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full'
+                            }
+                        }) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(registrationForm.telephone, {
+                            'label_attr': {
+                                'class': 'font-bold'
+                            },
+                            'attr': {
+                                'class': 'input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full'
+                            }
+                        }) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(registrationForm.email, {
+                            'label_attr': {
+                                'class': 'font-bold'
+                            },
+                            'attr': {
+                                'class': 'input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full'
+                            }
+                        }) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(registrationForm.plainPassword, {
+                            label: 'Password',
+                            'label_attr': {
+                                'class': 'font-bold'
+                            },
+                            'attr': {
+                                'class': 'input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full'
+                            }
+                        }) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(registrationForm.agreeTerms, {
+                            'label_attr': {
+                                'class': 'font-bold mt-2'
+                            },
+                            'attr': {
+                                'class': 'input-checkbox mr-2'
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="flex justify-center mt-6">
+                        <button type="submit" class="bg-yellow-500 hover:bg-yellow-400 text-white py-2 px-6 rounded-full text-lg">Register</button>
+                    </div>
+                </div>
+                {{ form_end(registrationForm) }}
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white p-4">
+            <div class="container mx-auto text-center">
+                <p>&copy; {{ "now"|date("Y") }} OzzaBank. Tous droits réservés.</p>
+                <p class="text-sm">Créé avec ❤️ par l'équipe OzzaBank</p>
+            </div>
+        </footer>
+
+    </div>
 {% endblock %}
