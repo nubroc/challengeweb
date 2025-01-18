@@ -44,4 +44,41 @@ final class UserhomepageController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/account/withdraw/{id}', name: 'account_withdraw')]
+    public function withdraw(Request $request, Account $account, EntityManagerInterface $em): Response
+    {
+        $amount = $request->request->get('amount');
+        if ($amount > 0 && $account->getBalance() >= $amount) {
+            $account->setBalance($account->getBalance() - $amount);
+            $em->flush();
+            $this->addFlash('success', 'Retrait effectué avec succès.');
+        } else {
+            $this->addFlash('error', 'Montant invalide ou solde insuffisant.');
+        }
+
+        return $this->redirectToRoute('userhomepage');
+    }
+
+    #[Route('/account/transfer', name: 'account_transfer')]
+    public function transfer(Request $request, EntityManagerInterface $em): Response
+    {
+        $fromAccountId = $request->request->get('from_account_id');
+        $toAccountId = $request->request->get('to_account_id');
+        $amount = $request->request->get('amount');
+
+        $fromAccount = $em->getRepository(Account::class)->find($fromAccountId);
+        $toAccount = $em->getRepository(Account::class)->find($toAccountId);
+
+        if ($fromAccount && $toAccount && $amount > 0 && $fromAccount->getBalance() >= $amount) {
+            $fromAccount->setBalance($fromAccount->getBalance() - $amount);
+            $toAccount->setBalance($toAccount->getBalance() + $amount);
+            $em->flush();
+            $this->addFlash('success', 'Virement effectué avec succès.');
+        } else {
+            $this->addFlash('error', 'Montant invalide, solde insuffisant ou comptes non trouvés.');
+        }
+
+        return $this->redirectToRoute('userhomepage');
+    }
 }

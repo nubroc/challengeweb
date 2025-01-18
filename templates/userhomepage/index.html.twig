@@ -5,6 +5,7 @@
 {% block body %}
 <div class="min-h-screen bg-gray-100 overflow-hidden">
 
+
     <nav class="bg-gray-800 text-white p-4">
         <div class="container mx-auto flex justify-between items-center">
             <a href="{{ path('welcomepage') }}" class="text-lg hover:text-gray-400">
@@ -19,7 +20,7 @@
     </nav>
 
     <div class="flex items-center justify-center min-h-[86vh] bg-gray-50" style="background-image: url('{{ asset('images/welcomebackground.jpg') }}');">
-        <div class="bg-white p-8 rounded-lg shadow-lg w-full sm:w-[90%] md:w-[80%] lg:w-[60%]">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full sm:w-[90%] md:w-[80%] lg:w-[60%] m-5">
             <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">Bienvenue, {{ app.user.nom }} {{ app.user.prenom }}!</h1>
 
             <h2 class="text-2xl font-bold text-gray-700 mb-4">Vos comptes</h2>
@@ -43,6 +44,11 @@
                                 <a href="{{ path('account_view', {id: account.id}) }}" class="text-blue-600 hover:text-blue-400">Voir</a>
                                 <span class="mx-2">|</span>
                                 <a href="{{ path('account_close', {id: account.id}) }}" class="text-red-600 hover:text-red-400">Clôturer</a>
+                                <span class="mx-2">|</span>
+                                <form method="post" action="{{ path('account_withdraw', {id: account.id}) }}" class="inline">
+                                    <input type="number" name="amount" placeholder="Montant" class="input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-2 w-24">
+                                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-400 text-white py-1 px-3 rounded-lg">Retirer</button>
+                                </form>
                             </td>
                         </tr>
                     {% else %}
@@ -52,25 +58,60 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="flex items-center justify-between py-8 bg-gray-100">
 
-            <div class="flex items-center justify-center py-8 bg-gray-100">
-                <div class="bg-white p-8 rounded-lg shadow-lg w-full sm:w-[90%] md:w-[80%] lg:w-[40%]">
-                    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Créer un nouveau compte</h2>
-                    {{ form_start(form) }}
-                    <div class="space-y-4">
-                        <div class="form-group">
-                            <label for="type" class="font-bold mr-4">Type</label>
-                            {{ form_widget(form.type, {'attr': {'class': 'input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full'}}) }}
+                <div class="bg-white p-8 rounded-lg shadow-lg w-[48%] mx-2">
+                    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Créer un compte</h2>
+                    <form method="post" action="{{ path('account_create') }}">
+                        <div class="space-y-4">
+                            <div class="form-group">
+                                <label for="account_type" class="font-bold mr-4">Type de compte</label>
+                                <select name="account_type" id="account_type" class="input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full" required>
+                                    <option value="Epargne">Epargne</option>
+                                    <option value="Courant">Courant</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="initial_balance" class="font-bold mr-4">Solde initial</label>
+                                <input type="number" name="initial_balance" id="initial_balance" class="input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full" required>
+                            </div>
+                            <div class="flex justify-center mt-6">
+                                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-400 text-white py-2 px-4 rounded-lg">Créer</button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="balance" class="font-bold mr-4">Solde</label>
-                            {{ form_widget(form.balance, {'attr': {'class': 'input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full'}}) }}
+                    </form>
+                </div>
+
+
+                <div class="bg-white p-8 rounded-lg shadow-lg w-[48%] mx-2">
+                    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Effectuer un virement</h2>
+                    <form method="post" action="{{ path('account_transfer') }}">
+                        <div class="space-y-4">
+                            <div class="form-group">
+                                <label for="from_account_id" class="font-bold mr-4">De</label>
+                                <select name="from_account_id" id="from_account_id" class="input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full">
+                                    {% for account in accounts %}
+                                        <option value="{{ account.id }}">{{ account.accountNumber }} - {{ account.balance }} €</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="to_account_id" class="font-bold mr-4">À</label>
+                                <select name="to_account_id" id="to_account_id" class="input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full">
+                                    {% for account in accounts %}
+                                        <option value="{{ account.id }}">{{ account.accountNumber }} - {{ account.balance }} €</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="amount" class="font-bold mr-4">Montant</label>
+                                <input type="number" name="amount" id="amount" class="input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full" required>
+                            </div>
+                            <div class="flex justify-center mt-6">
+                                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-400 text-white py-2 px-4 rounded-lg">Transférer</button>
+                            </div>
                         </div>
-                        <div class="flex justify-center mt-6">
-                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-400 text-white py-2 px-4 rounded-lg">Créer</button>
-                        </div>
-                    </div>
-                    {{ form_end(form) }}
+                    </form>
                 </div>
             </div>
         </div>
