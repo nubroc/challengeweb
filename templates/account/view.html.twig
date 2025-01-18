@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du compte - OzzaBank{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-100 overflow-hidden">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-800 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{{ path('welcomepage') }}" class="text-lg hover:text-gray-400">
+                <h2 class="text-2xl font-bold">OzzaBank</h2>
+            </a>
+            <ul class="flex space-x-6">
+                <li>
+                    <a href="{{ path('logout') }}" class="text-lg hover:text-gray-400">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Account Details Section -->
+    <div class="flex items-center justify-center min-h-[86vh] bg-gray-50" style="background-image: url('{{ asset('images/welcomebackground.jpg') }}');">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full sm:w-[90%] md:w-[80%] lg:w-[60%]">
+            <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">Détails du compte</h1>
+
+            <div class="text-gray-700 text-lg space-y-4">
+                <p><strong>Numéro de compte:</strong> {{ account.accountNumber }}</p>
+                <p><strong>Type:</strong> {{ account.type }}</p>
+                <p><strong>Solde:</strong> {{ account.balance }} €</p>
+            </div>
+
+            <div class="mt-6 flex justify-center">
+                <a href="{{ path('userhomepage') }}" class="bg-yellow-500 hover:bg-yellow-400 text-white py-2 px-6 rounded-full text-lg">Retour à la page d'accueil</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white p-4">
+        <div class="container mx-auto text-center">
+            <p>&copy; {{ "now"|date("Y") }} OzzaBank. Tous droits réservés.</p>
+            <p class="text-sm">Créé avec ❤️ par l'équipe OzzaBank</p>
+        </div>
+    </footer>
+
+</div>
+{% endblock %}

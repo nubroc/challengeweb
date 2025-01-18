@@ -53,20 +53,32 @@ class AccountController extends AbstractController
     }
 
     #[Route('/account/{id}', name: 'account_view')]
-    public function view(Account $account): Response
+    public function view(int $id, EntityManagerInterface $em): Response
     {
+        $account = $em->getRepository(Account::class)->find($id);
+
+        if (!$account || $account->getUser() !== $this->getUser()) {
+            throw $this->createNotFoundException('Compte non trouvé.');
+        }
+
         return $this->render('account/view.html.twig', [
             'account' => $account,
         ]);
     }
 
     #[Route('/account/{id}/close', name: 'account_close')]
-    public function close(Account $account, EntityManagerInterface $em): Response
+    public function close(int $id, EntityManagerInterface $em): Response
     {
-        $account->setClosed(true);
+        $account = $em->getRepository(Account::class)->find($id);
+
+        if (!$account || $account->getUser() !== $this->getUser()) {
+            throw $this->createNotFoundException('Compte non trouvé.');
+        }
+
+        $em->remove($account);
         $em->flush();
 
-        $this->addFlash('success', 'Compte clôturé avec succès !');
-        return $this->redirectToRoute('user_homepage');
+        $this->addFlash('success', 'Compte clôturé avec succès.');
+        return $this->redirectToRoute('userhomepage');
     }
 }
