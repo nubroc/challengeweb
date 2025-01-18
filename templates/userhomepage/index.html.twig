@@ -5,7 +5,6 @@
 {% block body %}
 <div class="min-h-screen bg-gray-100 overflow-hidden">
 
-
     <nav class="bg-gray-800 text-white p-4">
         <div class="container mx-auto flex justify-between items-center">
             <a href="{{ path('welcomepage') }}" class="text-lg hover:text-gray-400">
@@ -22,10 +21,37 @@
     <div class="flex items-center justify-center min-h-[86vh] bg-gray-50" style="background-image: url('{{ asset('images/welcomebackground.jpg') }}');">
         <div class="bg-white p-8 rounded-lg shadow-lg w-full sm:w-[90%] md:w-[80%] lg:w-[60%] m-5">
             <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">Bienvenue, {{ app.user.nom }} {{ app.user.prenom }}!</h1>
+            <h2 class="text-2xl font-bold text-gray-700 mt-8 mb-4">Historique des Transactions</h2>
 
+            <table class="w-full table-auto border-collapse border border-gray-300 text-gray-700 mb-8">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-300 px-4 py-2 text-left">Date et heure</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">Type de transaction</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">Montant</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                        {% for transaction in account.transactions %}
+                            <tr class="hover:bg-gray-100">
+                                <td class="border border-gray-300 px-4 py-2">{{ transaction.date|date('d/m/Y H:i') }}</td>
+                                <td class="border border-gray-300 px-4 py-2">{{ transaction.type }}</td>
+                                <td class="border border-gray-300 px-4 py-2">{{ transaction.amount }} €</td>
+                                <td class="border border-gray-300 px-4 py-2">{{ transaction.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-gray-500">Aucune transaction trouvée.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             <h2 class="text-2xl font-bold text-gray-700 mb-4">Vos comptes</h2>
 
-            <table class="w-full table-auto border-collapse border border-gray-300 text-gray-700">
+            <table class="w-full table-auto border-collapse border border-gray-300 text-gray-700 mb-8">
                 <thead>
                     <tr class="bg-gray-200">
                         <th class="border border-gray-300 px-4 py-2 text-left">Numéro de compte</th>
@@ -58,9 +84,9 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <div class="flex items-center justify-between py-8 bg-gray-100">
+            <div class="flex flex-wrap items-start justify-between py-8 bg-gray-100">
 
-                <div class="bg-white p-8 rounded-lg shadow-lg w-[48%] mx-2">
+                <div class="bg-white p-8 rounded-lg shadow-lg w-full lg:w-[48%] mx-2 mb-4 lg:mb-0">
                     <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Créer un compte</h2>
                     <form method="post" action="{{ path('account_create') }}">
                         <div class="space-y-4">
@@ -81,9 +107,7 @@
                         </div>
                     </form>
                 </div>
-
-
-                <div class="bg-white p-8 rounded-lg shadow-lg w-[48%] mx-2">
+                <div class="bg-white p-8 rounded-lg shadow-lg w-full lg:w-[48%] mx-2">
                     <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Effectuer un virement</h2>
                     <form method="post" action="{{ path('account_transfer') }}">
                         <div class="space-y-4">

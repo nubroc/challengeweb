@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Transaction;
 
 #[IsGranted('ROLE_USER')]
 final class UserhomepageController extends AbstractController
@@ -49,13 +50,22 @@ final class UserhomepageController extends AbstractController
     public function withdraw(Request $request, Account $account, EntityManagerInterface $em): Response
     {
         $amount = $request->request->get('amount');
+        $transaction = new Transaction();
+        $transaction->setType('withdraw');
+        $transaction->setAmount($amount);
+
         if ($amount > 0 && $account->getBalance() >= $amount) {
             $account->setBalance($account->getBalance() - $amount);
-            $em->flush();
+            $transaction->setStatus('success');
+            $em->persist($transaction);
             $this->addFlash('success', 'Retrait effectué avec succès.');
         } else {
+            $transaction->setStatus('failed');
             $this->addFlash('error', 'Montant invalide ou solde insuffisant.');
         }
+
+        $account->addTransaction($transaction);
+        $em->flush();
 
         return $this->redirectToRoute('userhomepage');
     }
@@ -70,14 +80,23 @@ final class UserhomepageController extends AbstractController
         $fromAccount = $em->getRepository(Account::class)->find($fromAccountId);
         $toAccount = $em->getRepository(Account::class)->find($toAccountId);
 
+        $transaction = new Transaction();
+        $transaction->setType('transfer');
+        $transaction->setAmount($amount);
+
         if ($fromAccount && $toAccount && $amount > 0 && $fromAccount->getBalance() >= $amount) {
             $fromAccount->setBalance($fromAccount->getBalance() - $amount);
             $toAccount->setBalance($toAccount->getBalance() + $amount);
-            $em->flush();
+            $transaction->setStatus('success');
+            $em->persist($transaction);
             $this->addFlash('success', 'Virement effectué avec succès.');
         } else {
+            $transaction->setStatus('failed');
             $this->addFlash('error', 'Montant invalide, solde insuffisant ou comptes non trouvés.');
         }
+
+        $fromAccount->addTransaction($transaction);
+        $em->flush();
 
         return $this->redirectToRoute('userhomepage');
     }
