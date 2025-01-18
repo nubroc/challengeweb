@@ -83,7 +83,6 @@ class Transaction
         return $this;
     }
     
-
     public function getAccount(): ?Account
     {
         return $this->account;

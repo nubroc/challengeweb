@@ -19,3 +19,6 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Repository\TransactionRepository:
+        tags: ['doctrine.repository_service']
