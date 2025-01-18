@@ -1,11 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Page d'accueil utilisateur - OzzaBank{% endblock %}
+{% block title %}User Homepage - OzzaBank{% endblock %}
 
 {% block body %}
 <div class="min-h-screen bg-gray-100 overflow-hidden">
 
-    <!-- Navbar -->
     <nav class="bg-gray-800 text-white p-4">
         <div class="container mx-auto flex justify-between items-center">
             <a href="{{ path('welcomepage') }}" class="text-lg hover:text-gray-400">
@@ -19,7 +18,6 @@
         </div>
     </nav>
 
-    <!-- User Dashboard Section -->
     <div class="flex items-center justify-center min-h-[86vh] bg-gray-50" style="background-image: url('{{ asset('images/welcomebackground.jpg') }}');">
         <div class="bg-white p-8 rounded-lg shadow-lg w-full sm:w-[90%] md:w-[80%] lg:w-[60%]">
             <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">Bienvenue, {{ app.user.nom }} {{ app.user.prenom }}!</h1>
@@ -54,10 +52,30 @@
                     {% endfor %}
                 </tbody>
             </table>
+
+            <div class="flex items-center justify-center py-8 bg-gray-100">
+                <div class="bg-white p-8 rounded-lg shadow-lg w-full sm:w-[90%] md:w-[80%] lg:w-[40%]">
+                    <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Créer un nouveau compte</h2>
+                    {{ form_start(form) }}
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label for="type" class="font-bold mr-4">Type</label>
+                            {{ form_widget(form.type, {'attr': {'class': 'input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full'}}) }}
+                        </div>
+                        <div class="form-group">
+                            <label for="balance" class="font-bold mr-4">Solde</label>
+                            {{ form_widget(form.balance, {'attr': {'class': 'input-field border border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 rounded-lg p-3 w-full'}}) }}
+                        </div>
+                        <div class="flex justify-center mt-6">
+                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-400 text-white py-2 px-4 rounded-lg">Créer</button>
+                        </div>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="bg-gray-800 text-white p-4">
         <div class="container mx-auto text-center">
             <p>&copy; {{ "now"|date("Y") }} OzzaBank. Tous droits réservés.</p>

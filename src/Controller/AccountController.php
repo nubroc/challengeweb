@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AccountController extends AbstractController
 {
@@ -28,10 +29,9 @@ class AccountController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getUser(); // Récupère l'utilisateur connecté
+            $user = $this->getUser();
             $account->setUser($user);
 
-            // Générer un numéro de compte unique
             $account->setAccountNumber(uniqid('ACC-'));
 
             // Règles de gestion
@@ -80,5 +80,29 @@ class AccountController extends AbstractController
 
         $this->addFlash('success', 'Compte clôturé avec succès.');
         return $this->redirectToRoute('userhomepage');
+    }
+
+    #[Route('/account/new', name: 'account_new')]
+    public function new(Request $request, ValidatorInterface $validator): Response
+    {
+        $account = new Account();
+        $form = $this->createForm(AccountType::class, $account);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($account->getType() === 'épargne' && $account->getBalance() < 10) {
+                $this->addFlash('error', 'Le solde initial pour un compte épargne doit être d\'au moins 10€.');
+            } else {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($account);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('account_success');
+            }
+        }
+
+        return $this->render('account/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

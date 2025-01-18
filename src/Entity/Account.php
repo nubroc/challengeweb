@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AccountRepository;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[ORM\Table(name: "accounts")]
@@ -21,6 +22,13 @@ class Account
     #[ORM\Column(type: "string")]
     private ?string $type = null;
 
+    /**
+     * @Assert\NotBlank()
+     * @Assert\GreaterThanOrEqual(
+     *     value = 10,
+     *     message = "Le solde initial pour un compte épargne doit être d'au moins 10€."
+     * )
+     */
     #[ORM\Column(type: "float")]
     private ?float $balance = null;
 
