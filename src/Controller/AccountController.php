@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Account;
+use App\Entity\Transaction;
 use App\Form\AccountType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AccountController extends AbstractController
 {
@@ -31,28 +31,24 @@ class AccountController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $this->getUser();
             $account->setUser($user);
-
             $account->setAccountNumber(uniqid('ACC-'));
 
-            // Règles de gestion
             if ($account->getType() === 'epargne' && $account->getBalance() < 10) {
                 $this->addFlash('error', 'Un compte épargne doit avoir un solde initial d\'au moins 10€.');
-                return $this->redirectToRoute('account_create');
+            } else {
+                $em->persist($account);
+                $em->flush();
+                $this->addFlash('réussi', 'Compte créé avec succès !');
+                return $this->redirectToRoute('userhomepage');
             }
-
-            $em->persist($account);
-            $em->flush();
-
-            $this->addFlash('success', 'Compte créé avec succès !');
-            return $this->redirectToRoute('user_homepage');
         }
 
-        return $this->render('userhomepage/create.html.twig', [
+        return $this->render('account/create.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/account/{id}', name: 'account_view')]
+    #[Route('/account/{id}', name: 'account_view', requirements: ['id' => '\d+'])]
     public function view(int $id, EntityManagerInterface $em): Response
     {
         $account = $em->getRepository(Account::class)->find($id);
@@ -104,5 +100,60 @@ class AccountController extends AbstractController
         return $this->render('account/new.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/account/withdraw/{id}', name: 'account_withdraw')]
+    public function withdraw(Request $request, Account $account, EntityManagerInterface $em): Response
+    {
+        $amount = $request->request->get('amount');
+        $transaction = new Transaction();
+        $transaction->setType('virement');
+        $transaction->setAmount($amount);
+
+        if ($amount > 0 && $account->getBalance() >= $amount) {
+            $account->setBalance($account->getBalance() - $amount);
+            $transaction->setStatus('réussi');
+            $em->persist($transaction);
+            $this->addFlash('réussi', 'Retrait effectué avec succès.');
+        } else {
+            $transaction->setStatus('failed');
+            $this->addFlash('error', 'Montant invalide ou solde insuffisant.');
+        }
+
+        $account->addTransaction($transaction);
+        $em->flush();
+
+        return $this->redirectToRoute('userhomepage');
+    }
+
+    #[Route('/account/transfer', name: 'account_transfer')]
+    public function transfer(Request $request, EntityManagerInterface $em): Response
+    {
+        $fromAccountId = $request->request->get('from_account_id');
+        $toAccountId = $request->request->get('to_account_id');
+        $amount = $request->request->get('amount');
+
+        $fromAccount = $em->getRepository(Account::class)->find($fromAccountId);
+        $toAccount = $em->getRepository(Account::class)->find($toAccountId);
+
+        $transaction = new Transaction();
+        $transaction->setType('transfer');
+        $transaction->setAmount($amount);
+
+        if ($fromAccount && $toAccount && $amount > 0 && $fromAccount->getBalance() >= $amount) {
+            $fromAccount->setBalance($fromAccount->getBalance() - $amount);
+            $toAccount->setBalance($toAccount->getBalance() + $amount);
+            $transaction->setStatus('réussi');
+            $em->persist($transaction);
+            $this->addFlash('success', 'Virement effectué avec succès.');
+        } else {
+            $transaction->setStatus('failed');
+            $this->addFlash('error', 'Montant invalide, solde insuffisant ou comptes non trouvés.');
+        }
+
+        $fromAccount->addTransaction($transaction);
+        $em->flush();
+
+        return $this->redirectToRoute('userhomepage');
     }
 }
